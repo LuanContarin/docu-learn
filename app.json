@@ -26,7 +26,8 @@
     "web": {
       "output": "static",
       "favicon": "./assets/images/favicon.png",
-      "backgroundColor": "#000101"
+      "backgroundColor": "#000101",
+      "bundler": "metro"
     },
     "plugins": [
       "expo-router",

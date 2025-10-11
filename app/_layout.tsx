@@ -1,3 +1,5 @@
+import "./global.css";
+
 import { Tabs } from "expo-router";
 
 import { Colors } from "@/constants/theme";
@@ -11,7 +13,7 @@ export default function RootLayout() {
         tabBarActiveTintColor: Colors.primary,
         tabBarInactiveTintColor: Colors.inactive,
         tabBarStyle: {
-          backgroundColor: Colors.tabBarBackground,
+          backgroundColor: Colors.backgroundSecondary,
           height: 115,
           borderTopWidth: 0,
         },

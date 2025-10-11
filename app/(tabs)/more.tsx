@@ -1,5 +1,5 @@
-import { ThemedView } from "@/components/themed-view";
+import { ThemedSafeAreaView } from "@/components/themed-safe-area-view";
 
 export default function MoreScreen() {
-  return <ThemedView></ThemedView>;
+  return <ThemedSafeAreaView className="flex-1"></ThemedSafeAreaView>;
 }
