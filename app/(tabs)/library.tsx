@@ -1,117 +1,189 @@
-import React, { useState } from "react";
+import { router } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
 import {
+  Alert,
   Dimensions,
   FlatList,
   Image,
   Pressable,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 
+import { BookAddModal } from "@/components/book-add-modal";
 import { ThemedSafeAreaView } from "@/components/themed-safe-area-view";
 import { ThemedText } from "@/components/themed-text";
+import { ThemedTextInput } from "@/components/themed-text-input";
 import { Colors } from "@/constants/theme";
+import { Book } from "@/models/book";
+import { getBooks, pickAndAddBook } from "@/services/book-service";
 import { Ionicons } from "@expo/vector-icons";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
-const BOOKS_MOCK = [
-  {
-    id: 1,
-    name: "Registro 1",
-    image_dir: "../../assets/images/favicon.png",
-  },
-  {
-    id: 2,
-    name: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo provident ex sequi ratione non modi maiores repellat sapiente, labore ad eius perferendis, eaque enim iure culpa architecto incidunt debitis quos!",
-  },
-  { id: 3, name: "Registro 3" },
-  { id: 4, name: "Registro 4" },
-  { id: 5, name: "Registro 5" },
-  { id: 6, name: "Registro 6" },
-  { id: 7, name: "Registro 7" },
-  { id: 8, name: "Registro 8" },
-  {
-    id: 9,
-    name: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Perferendis voluptatem incidunt ut consequuntur animi quisquam dignissimos, ad numquam reiciendis excepturi repudiandae? Quia, perspiciatis praesentium ex tempore fugiat illo optio voluptatibus!",
-  },
-  { id: 10, name: "Registro 10" },
-  { id: 11, name: "Registro 11" },
-  { id: 12, name: "Registro 12" },
-];
 
 export default function LibraryScreen() {
+  const [books, setBooks] = useState<Book[]>([]);
+
+  const fetchBooks = useCallback(async (search?: string) => {
+    try {
+      const foundBooks = await getBooks(search);
+      setBooks(foundBooks);
+    } catch (err) {
+      console.error(err);
+      Alert.alert("Erro", "Falha ao carregar os livros.");
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchBooks();
+  }, [fetchBooks]);
+
   return (
     <ThemedSafeAreaView className="flex-1">
       {/* Header */}
-      <LibraryHeader />
+      <LibraryHeader
+        onSearch={(term) => fetchBooks(term)}
+        onAdd={() => fetchBooks()}
+      />
 
       {/* Grid */}
-      <View className="my-3">
-        <LibraryGrid />
+      <View className="my-3 mx-auto">
+        <LibraryGrid books={books} />
       </View>
     </ThemedSafeAreaView>
   );
 }
 
-export function LibraryHeader(): React.JSX.Element {
+type LibraryHeaderProps = {
+  onSearch: (term: string) => void;
+  onAdd: () => void;
+};
+export function LibraryHeader({
+  onSearch,
+  onAdd,
+}: LibraryHeaderProps): React.JSX.Element {
   const [isSearching, setIsSearching] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const [modalAddBookVisible, setModalAddBookVisible] = useState(false);
+  const [modalConfirmCallback, setModalConfirmCallback] = useState<
+    ((name: string, coverUri?: string) => void) | null
+  >(null);
+
+  const DEBOUNCE_TIME = 300; // ms debounce
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (isSearching) {
+        onSearch(searchText.trim());
+      }
+    }, DEBOUNCE_TIME);
+
+    return () => clearTimeout(handler);
+  }, [searchText, isSearching, onSearch]);
 
   const onPressSearch = () => {
-    setIsSearching((prev) => !prev);
-    setSearchText("");
+    if (isSearching) {
+      setIsSearching(false);
+      setSearchText("");
+      onSearch("");
+      return;
+    }
+
+    setIsSearching(true);
+  };
+
+  const onPressAddBook = async () => {
+    const newBook = await pickAndAddBook((onConfirm) => {
+      setModalConfirmCallback(() => (name: string, corverUri?: string) => {
+        onConfirm(name, corverUri);
+      });
+      setModalAddBookVisible(true);
+    });
+
+    if (newBook) {
+      Alert.alert("Sucesso", `"${newBook.name}" foi adicionado.`);
+      onAdd();
+    }
   };
 
   return (
-    <View
-      className="flex-row items-center p-3"
-      style={{ backgroundColor: Colors.backgroundSecondary }}
-    >
-      <View className="flex-1 mr-3 h-10">
-        {isSearching ? (
-          <TextInput
-            className="rounded-md my-auto"
-            style={{
-              color: Colors.text,
-              textAlignVertical: "center",
-            }}
-            placeholder="Pesquisar..."
-            placeholderTextColor={Colors.mutedText}
-            value={searchText}
-            onChangeText={setSearchText}
-            autoFocus
-          />
-        ) : (
-          <ThemedText className="text-4xl my-auto">Biblioteca</ThemedText>
+    <>
+      {/* HEADER */}
+      <View
+        className="flex-row items-center p-3"
+        style={{ backgroundColor: Colors.backgroundSecondary }}
+      >
+        <View className="flex-1 mr-3 h-10">
+          {isSearching ? (
+            <ThemedTextInput
+              className="rounded-lg my-auto"
+              placeholder="Pesquisar..."
+              placeholderTextColor={Colors.mutedText}
+              value={searchText}
+              onChangeText={setSearchText}
+              autoFocus
+            />
+          ) : (
+            <ThemedText className="text-4xl my-auto">Biblioteca</ThemedText>
+          )}
+        </View>
+
+        <View className="my-auto">
+          <TouchableOpacity onPress={onPressSearch}>
+            <Ionicons
+              name={isSearching ? "arrow-back" : "search"}
+              size={30}
+              color={Colors.text}
+            />
+          </TouchableOpacity>
+        </View>
+        {isSearching ? null : (
+          <View className="my-auto ms-3">
+            <TouchableOpacity onPress={onPressAddBook}>
+              <Ionicons name="add-circle" size={30} color={Colors.text} />
+            </TouchableOpacity>
+          </View>
         )}
       </View>
 
-      <View className="my-auto">
-        <TouchableOpacity onPress={onPressSearch}>
-          <Ionicons
-            name={isSearching ? "arrow-back" : "search"}
-            size={30}
-            color={Colors.text}
-          />
-        </TouchableOpacity>
-      </View>
-    </View>
+      {/* MODAL add book */}
+      <BookAddModal
+        visible={modalAddBookVisible}
+        onConfirm={(name, coverUri) => {
+          if (modalConfirmCallback) {
+            modalConfirmCallback(name, coverUri);
+          }
+          setModalAddBookVisible(false);
+          setModalConfirmCallback(null);
+        }}
+        onCancel={() => {
+          setModalAddBookVisible(false);
+          setModalConfirmCallback(null);
+        }}
+      />
+    </>
   );
 }
 
-export function LibraryGrid(): React.JSX.Element {
-  const ITEM_HORIZONTAL_MARGIN = 4;
+type LibraryGridProps = {
+  books: Book[];
+};
+export function LibraryGrid({ books }: LibraryGridProps): React.JSX.Element {
   const NUM_COLUMNS = 3;
+  const ITEM_WIDTH = (SCREEN_WIDTH - 4 * 2 * NUM_COLUMNS - 32) / NUM_COLUMNS;
 
-  const ITEM_WIDTH =
-    (SCREEN_WIDTH - ITEM_HORIZONTAL_MARGIN * 2 * NUM_COLUMNS - 32) /
-    NUM_COLUMNS;
+  if (!books || books.length <= 0) {
+    return (
+      <View className="items-center mt-3">
+        <ThemedText>Nenhum livro encontrado</ThemedText>
+        <ThemedText>Aperte no botão "+" para adicionar</ThemedText>
+      </View>
+    );
+  }
 
   return (
     <FlatList
-      className="mx-auto"
-      data={BOOKS_MOCK}
+      data={books}
       keyExtractor={(item) => item.id.toString()}
       numColumns={NUM_COLUMNS}
       columnWrapperStyle={{
@@ -120,27 +192,28 @@ export function LibraryGrid(): React.JSX.Element {
       }}
       renderItem={({ item }) => (
         <Pressable
-          className="rounded-xl overflow-hidden mx-2 relative"
+          className="rounded-xl overflow-hidden aspect-cover mx-2 relative"
           style={{
             width: ITEM_WIDTH,
-            aspectRatio: 2 / 3,
             backgroundColor: Colors.backgroundTerciary,
           }}
+          onPress={() =>
+            router.push({
+              pathname: "/(docs)/reader",
+              params: { bookId: item.id },
+            })
+          }
         >
           {/* Background image or default icon */}
-          {item.image_dir ? (
+          {item.coverUri ? (
             <Image
-              source={{ uri: item.image_dir }}
+              source={{ uri: item.coverUri }}
               className="w-full h-full"
               resizeMode="cover"
             />
           ) : (
             <View className="flex-1 items-center justify-center">
-              <Ionicons
-                name="bookmark-outline"
-                size={50}
-                color={Colors.mutedText}
-              />
+              <Ionicons name="image" size={50} color={Colors.mutedText} />
             </View>
           )}
 
