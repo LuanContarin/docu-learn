@@ -85,7 +85,7 @@ export const BookAddModal: React.FC<Props> = ({
             )}
           </TouchableOpacity>
 
-          <View className="flex-row justify-between gap-5">
+          <View className="flex-row justify-end gap-5">
             <Button
               title="Cancelar"
               color={Colors.primary}

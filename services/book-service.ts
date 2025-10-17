@@ -64,56 +64,12 @@ export const getBook = async (id: string): Promise<Book | undefined> => {
   return allBooks.find((book) => book.id === id);
 };
 
-// export const pickAndAddBook = async (): Promise<Book | null> => {
-//   await ensureBooksDirectoryExists();
-
-//   try {
-//     const result = await DocumentPicker.getDocumentAsync({
-//       type: "application/pdf",
-//       copyToCacheDirectory: true,
-//     });
-
-//     // Caso o usuário cancele a ação
-//     if (result.canceled || !result.assets?.[0]?.uri) {
-//       return null;
-//     }
-
-//     const sourceUri = result.assets[0].uri;
-//     const originalName = result.assets[0].name.replace(/\.pdf$/i, ""); // Limpa o nome do livro
-
-//     const newBookFolderUri = `${booksDirUri}${originalName}/`;
-//     const destinationPdfUri = `${newBookFolderUri}doc.pdf`;
-
-//     await FileSystem.makeDirectoryAsync(newBookFolderUri, {
-//       intermediates: true,
-//     });
-
-//     await FileSystem.copyAsync({
-//       from: sourceUri,
-//       to: destinationPdfUri,
-//     });
-
-//     const newBook: Book = {
-//       id: originalName,
-//       name: originalName,
-//       pdfUri: destinationPdfUri,
-//     };
-
-//     console.log(`Livro adicionado: ${originalName}`);
-//     return newBook;
-//   } catch (error) {
-//     console.error("Erro ao adicionar o livro:", error);
-//     return null;
-//   }
-// };
-
 export const pickAndAddBook = async (
   showModal: (onConfirm: (name: string, coverUri?: string) => void) => void
 ): Promise<Book | null> => {
   await ensureBooksDirectoryExists();
 
   return new Promise((resolve) => {
-    // Open the modal (defined in your UI)
     showModal(async (bookName: string, coverUri?: string) => {
       if (!bookName.trim()) {
         Alert.alert("Nome Inválido", "Por favor, insira um nome válido.");

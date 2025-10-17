@@ -25,13 +25,8 @@ export default function LibraryScreen() {
   const [books, setBooks] = useState<Book[]>([]);
 
   const fetchBooks = useCallback(async (search?: string) => {
-    try {
-      const foundBooks = await getBooks(search);
-      setBooks(foundBooks);
-    } catch (err) {
-      console.error(err);
-      Alert.alert("Erro", "Falha ao carregar os livros.");
-    }
+    const foundBooks = await getBooks(search);
+    setBooks(foundBooks);
   }, []);
 
   useEffect(() => {
@@ -47,7 +42,7 @@ export default function LibraryScreen() {
       />
 
       {/* Grid */}
-      <View className="my-3 mx-auto">
+      <View className={`my-3 ${books.length >= 3 ? "items-center" : "mx-2"}`}>
         <LibraryGrid books={books} />
       </View>
     </ThemedSafeAreaView>
