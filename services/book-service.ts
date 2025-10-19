@@ -2,9 +2,8 @@ import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system/legacy";
 import { Alert } from "react-native";
 
+import { BOOKS_DIRECTORY_NAME } from "../constants/global-vars";
 import { Book } from "../models/book";
-
-const BOOKS_DIRECTORY_NAME = "Doculearn";
 
 const booksDirUri = `${FileSystem.documentDirectory}${BOOKS_DIRECTORY_NAME}/`;
 

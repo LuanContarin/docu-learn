@@ -22,7 +22,7 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen
-        name="library"
+        name="index"
         options={{
           title: "Biblioteca",
           tabBarIcon: ({ color, focused }) => (

@@ -21,7 +21,8 @@
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
-      }
+      },
+      "package": "com.luancontarin.doculearnapp"
     },
     "web": {
       "output": "static",
@@ -39,11 +40,20 @@
           "resizeMode": "contain",
           "backgroundColor": "#000101"
         }
-      ]
+      ],
+      "@config-plugins/react-native-blob-util",
+      "@config-plugins/react-native-pdf"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "84645c47-8442-4e9f-b1b2-61789ae99184"
+      }
+    },
+    "owner": "luancontarin"
   }
 }
