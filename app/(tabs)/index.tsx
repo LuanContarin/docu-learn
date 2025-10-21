@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 
-import { BookAddModal } from "@/components/book-add-modal";
+import { ModalBookAdd } from "@/components/modal-book-add";
 import { ThemedSafeAreaView } from "@/components/themed-safe-area-view";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedTextInput } from "@/components/themed-text-input";
@@ -142,7 +142,7 @@ export function LibraryHeader({
       </View>
 
       {/* MODAL add book */}
-      <BookAddModal
+      <ModalBookAdd
         visible={modalAddBookVisible}
         onConfirm={(name, coverUri) => {
           if (modalConfirmCallback) {

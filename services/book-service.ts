@@ -53,7 +53,7 @@ export const getBooks = async (searchTerm?: string): Promise<Book[]> => {
 
     return books;
   } catch (error) {
-    console.error("Erro ao ler o diretório dos livros:", error);
+    console.error("Error reading books directory:", error);
     return [];
   }
 };
@@ -117,7 +117,7 @@ export const pickAndAddBook = async (
         coverUri: finalCoverUri,
       };
 
-      console.log(`Livro adicionado: ${bookName}`);
+      console.log(`Book added: ${bookName}`);
       resolve(newBook);
     });
   });
@@ -127,10 +127,10 @@ export const deleteBook = async (id: string): Promise<boolean> => {
   try {
     const bookFolderUri = `${booksDirUri}${id}/`;
     await FileSystem.deleteAsync(bookFolderUri, { idempotent: true });
-    console.log(`Livro apagado: ${id}`);
+    console.log(`Book deleted: ${id}`);
     return true;
   } catch (error) {
-    console.error(`Erro ao apagar o livro ${id}:`, error);
+    console.error(`Error deleting book ${id}:`, error);
     return false;
   }
 };

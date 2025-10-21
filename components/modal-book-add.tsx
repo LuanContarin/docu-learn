@@ -13,7 +13,7 @@ interface Props {
   onCancel: () => void;
 }
 
-export const BookAddModal: React.FC<Props> = ({
+export const ModalBookAdd: React.FC<Props> = ({
   visible,
   onConfirm,
   onCancel,

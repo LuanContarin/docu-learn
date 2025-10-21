@@ -1,9 +1,10 @@
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Alert } from "react-native";
+import { ActivityIndicator, Alert, View } from "react-native";
 import Pdf, { PdfRef } from "react-native-pdf";
 import { captureRef } from "react-native-view-shot";
 
+import { ModalWordTranslate } from "@/components/modal-word-translate";
 import { ThemedSafeAreaView } from "@/components/themed-safe-area-view";
 import { Colors } from "@/constants/theme";
 import { getBook } from "@/services/book-service";
@@ -20,15 +21,20 @@ type OcrWord = {
   text: string;
   cornerPoints: CornerPoints;
 };
-
 export default function ReaderScreen() {
   const { bookId } = useLocalSearchParams<{ bookId: string }>();
-  const [bookUri, setBookUri] = useState<string | null>(null);
-  const [ocrWords, setOcrWords] = useState<OcrWord[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(1);
   const pdfRef = useRef<PdfRef>(null);
 
-  const DEBOUNCE_TIME = 500; // ms debounce
+  const [bookUri, setBookUri] = useState<string | null>(null);
+  const [ocrFullText, setOcrFullText] = useState<string>("");
+  const [ocrWords, setOcrWords] = useState<OcrWord[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [popupFullText, setPopupFullText] = useState("");
+  const [popupWord, setPopupWord] = useState("");
+
+  const DEBOUNCE_TIME_MS = 500;
 
   useEffect(() => {
     const loadBook = async () => {
@@ -82,11 +88,12 @@ export default function ReaderScreen() {
           });
         });
 
+        setOcrFullText(ocrResult?.text ?? "");
         setOcrWords(newWords);
       } catch (err) {
         console.error(err);
       }
-    }, DEBOUNCE_TIME);
+    }, DEBOUNCE_TIME_MS);
 
     return () => clearTimeout(handler);
   }, [currentPage]);
@@ -105,10 +112,7 @@ export default function ReaderScreen() {
 
   const onPdfTap = (page: number, x: number, y: number) => {
     if (!ocrWords || ocrWords.length <= 0) {
-      Alert.alert(
-        "Erro",
-        "Não foi possível detectar nenhuma palavra no livro."
-      );
+      Alert.alert("Erro", "Não foi encontrada nenhuma palavra no livro.");
       return;
     }
 
@@ -121,31 +125,42 @@ export default function ReaderScreen() {
 
     if (!tappedWord) return;
 
-    const wordText = removeUnwantedCharacters(tappedWord.text);
-    console.log("Tapped word:", tappedWord);
-    console.log("Word text:", wordText);
+    // Show popup
+    setPopupFullText(ocrFullText);
+    setPopupWord(removeUnwantedCharacters(tappedWord.text));
+    setPopupVisible(true);
   };
 
   return (
     <ThemedSafeAreaView className="flex-1">
-      {bookUri ? (
-        <Pdf
-          ref={pdfRef}
-          source={{ uri: bookUri }}
-          style={{ flex: 1 }}
-          horizontal={true}
-          enablePaging={true}
-          enableDoubleTapZoom={false}
-          onPageSingleTap={onPdfTap}
-          onPageChanged={(page) => setCurrentPage(page)}
-        />
-      ) : (
-        <ActivityIndicator
-          size="large"
-          color={Colors.primary}
-          className="flex-1"
-        />
-      )}
+      <View className="flex-1">
+        {bookUri ? (
+          <Pdf
+            ref={pdfRef}
+            source={{ uri: bookUri }}
+            style={{ flex: 1 }}
+            horizontal={true}
+            enablePaging={true}
+            enableDoubleTapZoom={false}
+            onPageChanged={(page) => setCurrentPage(page)}
+            onPageSingleTap={onPdfTap}
+          />
+        ) : (
+          <ActivityIndicator
+            size="large"
+            color={Colors.primary}
+            className="flex-1"
+          />
+        )}
+      </View>
+
+      {/* MODAL translate word */}
+      <ModalWordTranslate
+        visible={popupVisible}
+        fullText={popupFullText}
+        word={popupWord}
+        onClose={() => setPopupVisible(false)}
+      />
     </ThemedSafeAreaView>
   );
 }
