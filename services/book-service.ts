@@ -117,7 +117,6 @@ export const pickAndAddBook = async (
         coverUri: finalCoverUri,
       };
 
-      console.log(`Book added: ${bookName}`);
       resolve(newBook);
     });
   });
@@ -127,7 +126,6 @@ export const deleteBook = async (id: string): Promise<boolean> => {
   try {
     const bookFolderUri = `${booksDirUri}${id}/`;
     await FileSystem.deleteAsync(bookFolderUri, { idempotent: true });
-    console.log(`Book deleted: ${id}`);
     return true;
   } catch (error) {
     console.error(`Error deleting book ${id}:`, error);
