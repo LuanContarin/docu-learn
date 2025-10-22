@@ -1,7 +1,8 @@
 import Constants from "expo-constants";
 import React from "react";
-import { Button, View } from "react-native";
+import { Button, Image, View } from "react-native";
 
+import AppIcon from "@/assets/images/icon.png";
 import { ThemedSafeAreaView } from "@/components/themed-safe-area-view";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/theme";
@@ -21,7 +22,11 @@ export default function MoreScreen() {
 
   return (
     <ThemedSafeAreaView className="flex-1">
-      <View className="items-center my-10">
+      <View className="items-center mt-5">
+        <Image className="w-52 h-52" source={AppIcon} resizeMode="contain" />
+      </View>
+
+      <View className="items-center mb-10">
         <ThemedText className="text-lg">Versão do aplicativo</ThemedText>
         <ThemedText className="text-lg mt-1">{appVersion}</ThemedText>
       </View>
