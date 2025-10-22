@@ -51,3 +51,13 @@ Join our community of developers creating universal apps.
 
 This project uses Tesseract.js (Apache License 2.0)
 https://github.com/naptha/tesseract.js
+
+# Run the API
+
+```bash
+pip install numpy tensorflow keras flask
+```
+
+```bash
+python api.py
+```
