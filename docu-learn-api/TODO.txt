@@ -1,0 +1,6 @@
+https://knowledge.alteryx.com/index/s/article/Deploying-a-Keras-TensorFlow-Model-to-Promote-1583461451113?utm_content=&utm_term=&gad_campaignid=22904655754
+
+https://machinelearningmastery.com/save-load-keras-deep-learning-models/
+
+PYTHON API
+
