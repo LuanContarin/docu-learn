@@ -1,63 +1,122 @@
-# Welcome to your Expo app 👋
+<p align="center"><img src="app/assets/images/icon.png" alt="DocuLearn Logo" width="250"></p>
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+**DocuLearn** is an intelligent mobile app built with **Expo + React Native** that allows users to read documents, tap on words, and instantly translate them between **English 🇺🇸 → Portuguese 🇧🇷** using an integrated AI-powered translation API.
 
-## Get started
+<ul id="content-table" align="left">
+   <li><a href="#features">Features</a></li>
+   <li><a href="#technologies">Technologies</a></li>
+   <li><a href="#how-to-run">How to run</a></li>
+   <li><a href="#screenshots">Screenshots</a></li>
+</ul>
 
-1. Install dependencies
+<h2 id="features" align="left">🧠 Features</h2>
+
+- 📖 **Document reader:** Upload and read PDF books directly within the app.
+- 🔍 **Instant translation:** Tap on any word to get its translation from English → Portuguese.
+- 💾 **Local storage:** Books are saved locally using Expo FileSystem, inside the app folder.
+- 🗂️ **Book management:** Add and view books easily.
+- 🤖 **AI translation API:** Connects to a Flask-based Python backend that serves a TensorFlow/Keras translation model.
+- 🎨 **UI:** Built with default dark theming, icons, and a minimalist interface.
+
+<h2 id="technologies" align="left">⚙️ Technologies</h2>
+
+**Mobile App (Frontend)**
+
+- **Expo + React Native:** Cross-platform mobile development framework.
+- **@react-native-ml-kit:** OCR library for text extraction w/ Google ML Kit.
+
+**API (Backend)**
+
+- **Python + Flask:** Lightweight REST API to serve translation results.
+- **TensorFlow / Keras:** Deep learning model for text translation.
+- **NumPy:** Data processing and numerical operations.
+
+<h2 id="how-to-run" align="left">▶️ How to run</h2>
+
+### 🧩 Prerequisites
+
+- [Node.js](https://nodejs.org/)
+- [Expo CLI (With dev build)](https://docs.expo.dev/get-started/installation/)
+- [Python 3.12](https://www.python.org/downloads/)
+
+### 🚀 Run the App
+
+This project uses **React Native with native dependencies**, so it **cannot be run with Expo Go**.  
+You’ll need to build a **development client** or run it directly through **Metro with native builds**.
+
+#### 1. Install dependencies
+
+```bash
+npm install
+# or
+yarn install
+```
+
+#### 2. Prebuild the native project
+
+```bash
+npx expo prebuild
+```
+
+If it’s a bare React Native app, skip this step.
+
+#### 3. Start the Metro bundler
+
+```bash
+npx expo start --dev-client
+```
+
+> 💡 Do **not** use “Run in Expo Go” — it won’t work because Expo Go doesn’t include native dependencies.
+
+#### 4. Run the app on a device or emulator
+
+Choose one of the following:
+
+```bash
+# Android
+npx expo run:android
+
+# iOS (on macOS)
+npx expo run:ios
+```
+
+#### 5. (Optional) Create a custom dev build
+
+To make testing easier, you can create and reuse a dev build:
+
+```bash
+npx expo run:android --variant release
+```
+
+Then, you can open the app manually and connect it to Metro via the QR code printed in the terminal.
+
+### 🧠 Run the Translation API
+
+1. **Install dependencies**
 
    ```bash
-   npm install
+   pip install numpy tensorflow keras flask
    ```
 
-2. Start the app
+2. **Start the Flask API**
 
    ```bash
-   npx expo start
+   python api.py
    ```
 
-In the output, you'll find options to open the app in a
+3. The API will be available at:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+   ```
+   http://localhost:5000
+   ```
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+<h2 id="screenshots" align="left">🖼️ Screenshots</h2>
 
-## Get a fresh project
+<p align="center">
+   TODO: Add screenshots here
+  <!-- <img src="screenshots/1.png" width="240" alt="Reader Screen">
+  <img src="screenshots/2.png" width="240" alt="Translation Modal">
+  <img src="screenshots/3.png" width="240" alt="Book List"> -->
+</p>
 
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
-
-This project uses Tesseract.js (Apache License 2.0)
-https://github.com/naptha/tesseract.js
-
-# Run the API
-
-```bash
-pip install numpy tensorflow keras flask
-```
-
-```bash
-python api.py
-```
+<h4 align="center">📚 Built with passion to help learning new languages ❤️</h4>
