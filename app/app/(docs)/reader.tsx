@@ -22,13 +22,14 @@ type OcrWord = {
   cornerPoints: CornerPoints;
 };
 export default function ReaderScreen() {
-  const { bookId } = useLocalSearchParams<{ bookId: string }>();
   const pdfRef = useRef<PdfRef>(null);
 
+  const { bookId } = useLocalSearchParams<{ bookId: string }>();
   const [bookUri, setBookUri] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
   const [ocrFullText, setOcrFullText] = useState<string>("");
   const [ocrWords, setOcrWords] = useState<OcrWord[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(1);
 
   const [popupVisible, setPopupVisible] = useState(false);
   const [popupFullText, setPopupFullText] = useState("");
@@ -77,13 +78,13 @@ export default function ReaderScreen() {
         ocrResult.blocks?.forEach((block) => {
           block.lines?.forEach((line) => {
             line.elements?.forEach((el) => {
-              if (!el.cornerPoints) return;
-
-              newWords.push({
-                page: currentPage,
-                text: el.text,
-                cornerPoints: el.cornerPoints,
-              });
+              if (el.cornerPoints) {
+                newWords.push({
+                  page: currentPage,
+                  text: el.text,
+                  cornerPoints: el.cornerPoints,
+                });
+              }
             });
           });
         });
@@ -106,7 +107,7 @@ export default function ReaderScreen() {
       result: "tmpfile",
     }).then(
       (tmpFile) => tmpFile,
-      (error) => console.error("Oops, snapshot failed", error)
+      (err) => console.error(err)
     );
   };
 
