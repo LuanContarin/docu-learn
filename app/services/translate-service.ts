@@ -5,47 +5,37 @@ export interface TranslationResult {
   translated: string;
 }
 
-// const API_URL = "https://api/translate";
+const URL_API = "http://localhost:5000";
 
 export const translateWord = async (
-  word: string,
-  fullText?: string
+  text: string
 ): Promise<TranslationResult | null> => {
-  if (!word.trim()) return null;
+  if (!text.trim()) return null;
 
   try {
-    //TEMP MOCK RETURN:
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    const response = await fetch(`${URL_API}/traduzir`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        texto: text,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error("Translation API error:", await response.text());
+      throw new Error("Failed to fetch translation");
+    }
+
+    const data = await response.json();
+
     return {
-      original: word,
-      translated: "<PLACEHOLDER>",
+      original: data?.texto_original,
+      translated: data?.texto_traduzido || "(sem tradução)",
     };
-
-    // const response = await fetch(API_URL, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     text: word,
-    //     context: fullText, // optional context to improve translation accuracy
-    //   }),
-    // });
-
-    // if (!response.ok) {
-    //   console.error("Translation API error:", await response.text());
-    //   throw new Error("Failed to fetch translation");
-    // }
-
-    // const data = await response.json();
-
-    // return {
-    //   original: word,
-    //   translated: data.translatedText || "(no translation)",
-    //   detectedLanguage: data.detectedSourceLanguage,
-    // };
-  } catch (error) {
-    console.error("Error translating word:", error);
+  } catch (err) {
+    console.error(err);
     Alert.alert("Erro", "Ocorreu um erro ao traduzir o texto selecionado.");
     return null;
   }

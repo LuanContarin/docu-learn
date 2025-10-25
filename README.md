@@ -58,8 +58,6 @@ yarn install
 npx expo prebuild
 ```
 
-If it’s a bare React Native app, skip this step.
-
 #### 3. Start the Metro bundler
 
 ```bash

@@ -29,7 +29,7 @@ export const ModalWordTranslate: React.FC<Props> = ({
       setLoading(true);
       setTranslation(null);
 
-      translateWord(word, fullText)
+      translateWord(word)
         .then((result) => setTranslation(result))
         .finally(() => setLoading(false));
     }

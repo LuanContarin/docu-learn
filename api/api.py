@@ -21,7 +21,7 @@ def handle_translation():
       return jsonify({'erro': 'Nenhum texto fornecido no corpo da requisição'}), 400
     
     texto_traduzido = traduzir(texto_original)
-        
+    
     # Devolve a tradução em formato JSON
     return jsonify({
       'texto_original': texto_original,
@@ -31,8 +31,7 @@ def handle_translation():
     print(f"Erro ao traduzir: {e}")
     return jsonify({'erro': 'Erro interno do servidor ao processar a tradução'}), 500
 
-# --- 7. INICIA O SERVIDOR ---
+# Inicia a API
 if __name__ == '__main__':
-    print("\n📑Iniciando servidor Flask...")
-    app.run(host='0.0.0.0', port=5000, debug=True)
-    # app.run(host='0.0.0.0', port=5000, debug=False)
+  print("\n📑Iniciando servidor Flask...")
+  app.run(host='0.0.0.0', port=5000, debug=True)
