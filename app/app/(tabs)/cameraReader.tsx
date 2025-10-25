@@ -19,6 +19,7 @@ import { ModalWordTranslate } from "@/components/modal-word-translate";
 import { ThemedSafeAreaView } from "@/components/themed-safe-area-view";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/theme";
+import { getImageSize } from "@/utils/image-helper-functions";
 import {
   isPointInsideWordBox,
   removeUnwantedCharacters,
@@ -60,18 +61,6 @@ export default function CameraReaderScreen() {
       (tmpFile) => tmpFile,
       (err) => console.error(err)
     );
-  };
-
-  const getImageSize = (
-    uri: string
-  ): Promise<{ imgWidth: number; imgHeight: number }> => {
-    return new Promise((resolve, reject) => {
-      Image.getSize(
-        uri,
-        (width, height) => resolve({ imgWidth: width, imgHeight: height }),
-        (err) => reject(err)
-      );
-    });
   };
 
   const onTakePhoto = async () => {
