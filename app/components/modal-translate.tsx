@@ -2,21 +2,21 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Button, Modal, View } from "react-native";
 
 import { Colors } from "@/constants/theme";
-import { translateWord, TranslationResult } from "@/services/translate-service";
+import { translateText, TranslationResult } from "@/services/translate-service";
 
 import { ThemedText } from "./themed-text";
 
 interface Props {
   visible: boolean;
-  word: string;
-  fullText?: string;
+  showOriginal: boolean;
+  text: string;
   onClose: () => void;
 }
 
-export const ModalWordTranslate: React.FC<Props> = ({
+export const ModalTranslate: React.FC<Props> = ({
   visible,
-  word,
-  fullText,
+  showOriginal,
+  text,
   onClose,
 }) => {
   const [loading, setLoading] = useState(false);
@@ -25,15 +25,15 @@ export const ModalWordTranslate: React.FC<Props> = ({
   );
 
   useEffect(() => {
-    if (visible && word) {
+    if (visible && text) {
       setLoading(true);
       setTranslation(null);
 
-      translateWord(word)
+      translateText(text)
         .then((result) => setTranslation(result))
         .finally(() => setLoading(false));
     }
-  }, [visible, word, fullText]);
+  }, [visible, text]);
 
   return (
     <Modal visible={visible} animationType="fade" transparent>
@@ -42,13 +42,15 @@ export const ModalWordTranslate: React.FC<Props> = ({
           className="w-11/12 rounded-xl p-5 shadow-lg"
           style={{ backgroundColor: Colors.backgroundTerciary }}
         >
-          {/* Word (English) */}
-          <View className="flex-row mb-3">
-            <ThemedText className="text-2xl">🇺🇸</ThemedText>
-            <ThemedText className="text-lg font-semibold ml-2">
-              {word}
-            </ThemedText>
-          </View>
+          {/* Original text */}
+          {showOriginal ? (
+            <View className="flex-row mb-3">
+              <ThemedText className="text-2xl">🇺🇸</ThemedText>
+              <ThemedText className="text-lg font-semibold ml-2">
+                {text}
+              </ThemedText>
+            </View>
+          ) : null}
 
           {/* Translation block */}
           <View className="mt-3 min-h-[80px] justify-center items-center">
@@ -56,10 +58,15 @@ export const ModalWordTranslate: React.FC<Props> = ({
               <ActivityIndicator size="large" color={Colors.primary} />
             ) : translation ? (
               <View className="flex-row items-center justify-center">
-                <ThemedText className="text-2xl">🇧🇷</ThemedText>
-                <ThemedText className="text-base ml-2">
-                  {translation.translated}
-                </ThemedText>
+                <View>
+                  <ThemedText className="text-2xl">🇧🇷</ThemedText>
+                </View>
+
+                <View>
+                  <ThemedText className="text-base ml-2">
+                    {translation.translated}
+                  </ThemedText>
+                </View>
               </View>
             ) : (
               <ThemedText className="text-base opacity-70">

@@ -7,7 +7,7 @@ export interface TranslationResult {
 
 const URL_API = "http://localhost:5000";
 
-export const translateWord = async (
+export const translateText = async (
   text: string
 ): Promise<TranslationResult | null> => {
   if (!text.trim()) return null;

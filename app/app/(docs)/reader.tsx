@@ -1,11 +1,12 @@
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Alert, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, View } from "react-native";
 import Pdf, { PdfRef } from "react-native-pdf";
 import { captureRef } from "react-native-view-shot";
 
-import { ModalWordTranslate } from "@/components/modal-word-translate";
+import { ModalTranslate } from "@/components/modal-translate";
 import { ThemedSafeAreaView } from "@/components/themed-safe-area-view";
+import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/theme";
 import { getBook } from "@/services/book-service";
 import {
@@ -32,8 +33,8 @@ export default function ReaderScreen() {
   const [ocrWords, setOcrWords] = useState<OcrWord[]>([]);
 
   const [popupVisible, setPopupVisible] = useState(false);
-  const [popupFullText, setPopupFullText] = useState("");
-  const [popupWord, setPopupWord] = useState("");
+  const [popupText, setPopupText] = useState("");
+  const [popupShowOriginal, setPopupShowOriginal] = useState(false);
 
   const DEBOUNCE_TIME_MS = 500;
 
@@ -126,9 +127,21 @@ export default function ReaderScreen() {
 
     if (!tappedWord) return;
 
-    // Show popup
-    setPopupFullText(ocrFullText);
-    setPopupWord(removeUnwantedCharacters(tappedWord.text));
+    // Show popup for word
+    setPopupText(removeUnwantedCharacters(tappedWord.text));
+    setPopupShowOriginal(true);
+    setPopupVisible(true);
+  };
+
+  const onTranslateTextTap = () => {
+    if (!ocrFullText) {
+      Alert.alert("Erro", "Não foi encontrado nenhum texto no livro.");
+      return;
+    }
+
+    // Show popup for text
+    setPopupText(ocrFullText);
+    setPopupShowOriginal(false);
     setPopupVisible(true);
   };
 
@@ -155,11 +168,21 @@ export default function ReaderScreen() {
         )}
       </View>
 
+      <Pressable
+        className="items-center justify-center rounded-lg py-4 m-4"
+        onPress={onTranslateTextTap}
+        style={{
+          backgroundColor: Colors.primary,
+        }}
+      >
+        <ThemedText className="font-bold text-lg">Traduzir texto</ThemedText>
+      </Pressable>
+
       {/* MODAL translate word */}
-      <ModalWordTranslate
+      <ModalTranslate
         visible={popupVisible}
-        fullText={popupFullText}
-        word={popupWord}
+        text={popupText}
+        showOriginal={popupShowOriginal}
         onClose={() => setPopupVisible(false)}
       />
     </ThemedSafeAreaView>

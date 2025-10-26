@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
+  Alert,
   Button,
   GestureResponderEvent,
   Image,
@@ -15,7 +16,7 @@ import {
   useCameraPermission,
 } from "react-native-vision-camera";
 
-import { ModalWordTranslate } from "@/components/modal-word-translate";
+import { ModalTranslate } from "@/components/modal-translate";
 import { ThemedSafeAreaView } from "@/components/themed-safe-area-view";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/theme";
@@ -44,8 +45,8 @@ export default function CameraReaderScreen() {
   const [imageLayout, setImageLayout] = useState({ width: 0, height: 0 });
 
   const [popupVisible, setPopupVisible] = useState(false);
-  const [popupWord, setPopupWord] = useState("");
-  const [popupFullText, setPopupFullText] = useState("");
+  const [popupText, setPopupText] = useState("");
+  const [popupShowOriginal, setPopupShowOriginal] = useState(false);
 
   useEffect(() => {
     if (!hasPermission) requestPermission();
@@ -130,8 +131,30 @@ export default function CameraReaderScreen() {
       if (!tappedWord) return;
 
       // Show popup
-      setPopupFullText(ocrResult.text ?? "");
-      setPopupWord(removeUnwantedCharacters(tappedWord.text));
+      setPopupText(removeUnwantedCharacters(tappedWord.text));
+      setPopupShowOriginal(true);
+      setPopupVisible(true);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const onTranslateTextTap = async () => {
+    try {
+      const imageTmpFile = await takeScreenshot();
+      if (!imageTmpFile) return;
+
+      const ocrResult = await TextRecognition.recognize(imageTmpFile);
+      if (!ocrResult) return;
+
+      if (!ocrResult.text) {
+        Alert.alert("Erro", "Não foi encontrado nenhum texto na imagem.");
+        return;
+      }
+
+      // Show popup
+      setPopupText(ocrResult.text);
+      setPopupShowOriginal(false);
       setPopupVisible(true);
     } catch (err) {
       console.error(err);
@@ -209,21 +232,31 @@ export default function CameraReaderScreen() {
       )}
 
       {photoPath && (
-        <Pressable
-          className="items-center justify-center rounded-lg py-4 m-4"
-          onPress={onRetakePicture}
-          style={{
-            backgroundColor: Colors.primary,
-          }}
-        >
-          <ThemedText className="font-bold text-lg">Tirar outra</ThemedText>
-        </Pressable>
+        <View className="flex-row gap-4 px-4 pb-6">
+          <Pressable
+            className="flex-1 py-5 rounded-lg items-center justify-center"
+            onPress={onRetakePicture}
+            style={{ backgroundColor: Colors.primary }}
+          >
+            <ThemedText className="font-bold text-lg">Tirar outra</ThemedText>
+          </Pressable>
+
+          <Pressable
+            className="flex-1 py-5 rounded-lg items-center justify-center"
+            onPress={onTranslateTextTap}
+            style={{ backgroundColor: Colors.primary }}
+          >
+            <ThemedText className="font-bold text-lg">
+              Traduzir texto
+            </ThemedText>
+          </Pressable>
+        </View>
       )}
 
-      <ModalWordTranslate
+      <ModalTranslate
         visible={popupVisible}
-        word={popupWord}
-        fullText={popupFullText}
+        text={popupText}
+        showOriginal={popupShowOriginal}
         onClose={() => setPopupVisible(false)}
       />
     </ThemedSafeAreaView>
