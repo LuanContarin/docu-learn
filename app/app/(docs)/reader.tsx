@@ -178,7 +178,6 @@ export default function ReaderScreen() {
         <ThemedText className="font-bold text-lg">Traduzir texto</ThemedText>
       </Pressable>
 
-      {/* MODAL translate word */}
       <ModalTranslate
         visible={popupVisible}
         text={popupText}
