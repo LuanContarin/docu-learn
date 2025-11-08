@@ -15,7 +15,7 @@
 - 🔍 **Instant translation:** Tap on any word to get its translation from English → Portuguese.
 - 💾 **Local storage:** Books are saved locally using Expo FileSystem, inside the app folder.
 - 🗂️ **Book management:** Add and view books easily.
-- 🤖 **AI translation API:** Connects to a Flask-based Python backend that serves a TensorFlow/Keras translation model.
+- 🤖 **AI translation API:** Connects to a FastAPI-based Python backend that serves a PyTorch translation model.
 - 🎨 **UI:** Built with default dark theming, icons, and a minimalist interface.
 
 <h2 id="technologies" align="left">⚙️ Technologies</h2>
@@ -27,9 +27,9 @@
 
 **API (Backend)**
 
-- **Python + Flask:** Lightweight REST API to serve translation results.
-- **TensorFlow / Keras:** Deep learning model for text translation.
-- **NumPy:** Data processing and numerical operations.
+- **FastAPI:** Lightweight REST API to serve translation results.
+- **HuggingFace + PyTorch:** Deep learning model for text translation.
+- **NumPy + Pandas:** Data processing and numerical operations.
 
 <h2 id="how-to-run" align="left">▶️ How to run</h2>
 
@@ -37,7 +37,7 @@
 
 - [Node.js](https://nodejs.org/)
 - [Expo CLI (With dev build)](https://docs.expo.dev/get-started/installation/)
-- [Python 3.12](https://www.python.org/downloads/)
+- [Python 3.10](https://www.python.org/downloads/)
 
 ### 🚀 Run the App
 
@@ -90,31 +90,61 @@ Then, you can open the app manually and connect it to Metro via the QR code prin
 
 ### 🧠 Run the Translation API
 
+> 💡 If CUDA is available, the API automatically moves the model to GPU<br>
+
 1. **Install dependencies**
 
-   ```bash
-   pip install numpy tensorflow keras flask
-   ```
+   To install the required pytorch and transformers libraries, follow the instructions at [PyTorch Get Started](https://pytorch.org/get-started/locally/) for your system.
 
-2. **Start the Flask API**
+   Then, install the remaining dependencies:
 
    ```bash
-   python api.py
+   pip install -r requirements.txt
    ```
 
-3. The API will be available at:
+2. **Start the API server**
+
+   ```bash
+   python main.py
+   ```
+
+3. The server will start automatically at:
 
    ```
-   http://localhost:5000
+   http://127.0.0.1:8000
    ```
+
+4. Once running, the docs will be available at:
+   ```
+   http://127.0.0.1:8000/docs
+   ```
+
+### 🧩 Example Request
+
+**POST** `/translate`
+
+Request JSON
+
+```json
+{
+  "text": "He is playing there."
+}
+```
+
+Response JSON
+
+```json
+{
+  "original_text": "He is playing there.",
+  "translated_text": "Ele está brincando lá."
+}
+```
 
 <h2 id="screenshots" align="left">🖼️ Screenshots</h2>
 
 <p align="center">
-   TODO: Add screenshots here
-  <!-- <img src="screenshots/1.png" width="240" alt="Reader Screen">
-  <img src="screenshots/2.png" width="240" alt="Translation Modal">
-  <img src="screenshots/3.png" width="240" alt="Book List"> -->
+  <img src="screenshots/1.png" width="1080" alt="App interface">
+  <img src="screenshots/2.png" width="1080" alt="Translation Modal">
 </p>
 
 <h4 align="center">📚 Built with passion to help learning new languages ❤️</h4>

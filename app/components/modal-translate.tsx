@@ -64,7 +64,7 @@ export const ModalTranslate: React.FC<Props> = ({
 
                 <View>
                   <ThemedText className="text-base ml-2">
-                    {translation.translated}
+                    {translation.translated_text}
                   </ThemedText>
                 </View>
               </View>
