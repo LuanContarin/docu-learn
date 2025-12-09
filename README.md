@@ -35,7 +35,7 @@
 
 ### 🧩 Prerequisites
 
-- [Node.js](https://nodejs.org/)
+- [Node.js >=22.14](https://nodejs.org/)
 - [Expo CLI (With dev build)](https://docs.expo.dev/get-started/installation/)
 - [Python 3.10](https://www.python.org/downloads/)
 
