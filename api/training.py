@@ -119,7 +119,7 @@ def tokenize_function(rows):
     tgt_lang_code = get_lang_code(tgt_language) # 'pt' or 'en'
     
     tokenizer.src_lang = src_lang_code
-    tokenizer.src_lang = tgt_lang_code
+    tokenizer.tgt_lang = tgt_lang_code
     prompt = [row for row in rows[src_language]]
     
     # Tokenize source text (input)
